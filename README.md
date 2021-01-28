@@ -4,10 +4,6 @@
 
 ![BuildStatus](https://github.com/MiguelGuardado/Guardado_Miguel_BMI203_HW1/workflows/HW1/badge.svg?event=push)
 
-
-<<<<<<< HEAD
-=======
-
 ###Code Layout
 
 algs.py - contains code to implement PairwiseAlignment for SmithWaterman/ NeedlemanWunsh algorithims, no main class and 
@@ -26,7 +22,7 @@ gap_ext pentalties on a static set of sequences.
 
 /sequences/-contains all the fasta files that were used in my assignments, can be refrences by Pospairs.txt
 Negpairs.txt
->>>>>>> Last Commitment for Assignment
+
 
 ### Main
 Runs all code in align/\_\_main\_\_.py, useful for part 2

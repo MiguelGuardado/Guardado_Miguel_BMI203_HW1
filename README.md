@@ -4,7 +4,7 @@
 
 ![BuildStatus](https://github.com/MiguelGuardado/Guardado_Miguel_BMI203_HW1/workflows/HW1/badge.svg?event=push)
 
-###Code Layout
+### Code Layout
 
 algs.py - contains code to implement PairwiseAlignment for SmithWaterman/ NeedlemanWunsh algorithims, no main class and 
 should only be used for declaring objects

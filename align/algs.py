@@ -62,6 +62,15 @@ class PairwiseAligner:
 		self.seq1=seq1
 		self.seq2=seq2
 
+	def read_fasta(filename):
+		contents = []
+		with open(filename, "r") as f:
+			for line in f:
+				line = line.strip('\n')
+				contents.append(line)
+		seq = ''.join(contents[1:])
+		return (seq)
+
 
 	def run_traceback(self):
 		pass
@@ -251,9 +260,11 @@ class NeedlemanWunsch(PairwiseAligner):
 
 
 	def run_traceback(self):
+		#Create three
 		seq1_align = ""
 		seq2_align = ""
 		align = ""
+		#Initialize start point of the trace back
 		i = len(self.seq1)
 		j = len(self.seq2)
 		idx=0
@@ -292,26 +303,3 @@ class NeedlemanWunsch(PairwiseAligner):
 		self.align_pattern=align
 
 
-
-def main():
-	Seq1 = NeedlemanWunsch("HEAGAWGHEE", "PAWHEAE", -5, -2, True)
-	Seq1.LoadScoreMatrix('../scoring_matrices/BLOSUM50.mat')
-	Seq1.fill_traceback()
-	Seq1.run_traceback()
-	print(Seq1.seq1_aligned)
-	print(Seq1.align_pattern)
-	print(Seq1.seq2_aligned)
-
-
-
-	# Seq1 = SmithWaterman("HEAGAWGHEE", "PAWHEAE", -8, -8,True)
-	#
-	# Seq1.LoadScoreMatrix('../scoring_matrices/BLOSUM50.mat')
-	# Seq1.fill_traceback()
-	# Seq1.run_traceback()
-
-
-
-
-if __name__ == "__main__":
-	main()

@@ -3,7 +3,8 @@ import numpy as np
 from sklearn import metrics
 import matplotlib.pyplot as plt
 
-
+#This is the function used to read in fasta, same as the one used inside algs but does not require creating an
+#instant of an object.
 def read_fasta(filename):
     contents = []
     with open(filename, "r") as f:
@@ -14,6 +15,7 @@ def read_fasta(filename):
     return( seq )
 
 
+#This will be used to load in PosPairs.txt/NegPairs.txt
 def read_sequence_tests(filepath):
     seq_test=[]
     with open(filepath,"r") as f:
@@ -23,6 +25,8 @@ def read_sequence_tests(filepath):
             seq_test.append(line)
     return (seq_test)
 
+#This will be used to create roc plots for each of the test preformed, fpr/tpr for making the roc plot and the
+# other input parameters are to create a proper file name for all the tests.
 def plot_roc_curve(fpr, tpr,gap_open_cost,gap_ext_cost,Score_Mat):
     plt.plot(fpr, tpr, color='orange', label='ROC')
     plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--')
@@ -37,13 +41,30 @@ def plot_roc_curve(fpr, tpr,gap_open_cost,gap_ext_cost,Score_Mat):
 
 
 
-#This will input a pair of positive/negative sequence files to test,
+#This will input a pair of positive/negative sequence files to test, and require the gap open/ext cost for
+# each of the tests preformed, alignment_test should only get inputted 0/1 depending if you want a
+#SW test (0), or NW(1). Finally you also input the file path to the score matrix to input and read for the test.
+
+
+'''
+We will get outputted 4 different parameters
+
+TotalScore= np.array(len(Pos)+len(Neg))array of the total score outputted by each sequence alignment test
+threshold= integer of the threshold of each value
+confusion_matrix = np.array(2,2) confusion matrix of the alignment test based on the threshold defined earlier 
+auc= area under the roc curve for the current test ran
+
+
+'''
 def return_score(Pos, Neg, gap_open_cost, gap_ext_cost, alignment_test,score_file):
     PosScores=[]
     NegScores=[]
     score_name=score_file
+
     score_file="../scoring_matrices/"+score_file
+    #Iterate through the entire length of pos, which should be the same length of index
     for i in range(0,len(Pos)):
+        #Read in iteration of test for pos/neg at the same index i
         PosSeq1=read_fasta(Pos[i][0])
         PosSeq2=read_fasta(Pos[i][1])
         NegSeq1=read_fasta(Neg[i][0])
@@ -69,6 +90,7 @@ def return_score(Pos, Neg, gap_open_cost, gap_ext_cost, alignment_test,score_fil
 
     #np.savetxt("TempArray.txt", TotalScores)
     #TotalScores=np.loadtxt("TempArray.txt")
+    #Get threshold based on the mean of total scores
     threshold=np.mean(TotalScores)
     confusion_matrix=np.zeros((2,2))
 
@@ -108,13 +130,15 @@ def return_score(Pos, Neg, gap_open_cost, gap_ext_cost, alignment_test,score_fil
 def main():
     #
     # #This code will be used for questions 1-4.
+
+    #load in Pospair/Negpair
     Pospair=read_sequence_tests('../scoring_matrices/Pospairs.txt')
     Negpair = read_sequence_tests('../scoring_matrices/Negpairs.txt')
 
-
+    #Run test for pos/neg pair with open_gap=-11 and gap_ext=-3 on a smith-waterman(0) test, using a BLOSUM50.mat
     TotalScores,threshold,confusion_matrix,auc=return_score(Pospair,Negpair,-11,-3,0,"BLOSUM50.mat")
 
-    print(confusion_matrix)
+    #Create histogram for the Totalscore
     plt.hist(TotalScores)
     plt.xlabel('Scores')
     plt.ylabel('Count')
@@ -125,12 +149,13 @@ def main():
 
     # This code will be used for questions 5-8
 
-    #Question 5
+    #Create matrix for varying rates of gap_open/gap_close
     gap_open=np.arange(1,21)
     gap_ext=np.arange(1,6)
     auc_mat=np.zeros((20,5))
 
-    #Question 5 to get the best score for the
+    #Iterate through rates of gap_open/gap_test to obtain auc score for each test, and append to the matrix that is indexd
+    #by the test run. row=gap_open, col=gap_ext.
     for i in range(0,20):
         for j in range(0,5):
             print("Running Test on:",i,j)
@@ -144,11 +169,14 @@ def main():
 
     #np.save("../scoring_matrices/auc_mat.txt",auc_mat)
 
+    #Load in auc_mat so you dont have to rerun the test
     auc_mat=np.load("../scoring_matrices/auc_mat.txt.npy")
 
     i,j = np.argwhere(auc_mat == np.max(auc_mat))[0]
+    #Index where the highest auroc value is found
     print(i,j)
 
+    #Run test on the optimal gap open/ext scores for each of the 4 different scoring matricies
     ScoreMatricies=["BLOSUM50.mat","BLOSUM62.mat","PAM100.mat","PAM250.mat"]
 
     GlobalAuc=[]
